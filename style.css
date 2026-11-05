@@ -1,0 +1,639 @@
+:root {
+    --color-bg: #0A0A0A;
+    --color-text: #EAEAEA;
+    --color-muted: #888888;
+    --color-accent-orange: #CC5500;
+    --color-accent-green: #228B22;
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-body: 'Inter', sans-serif;
+    --transition-slow: 1.5s ease-in-out;
+    --transition-medium: 0.8s ease-in-out;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Typography Defaults */
+h1, h2, blockquote {
+    font-family: var(--font-heading);
+    font-weight: 300;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+/* View Management */
+.view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-slow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.view.active {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative; /* flow normally */
+}
+
+.view.hidden {
+    display: none; /* Removed from flow entirely when truly hidden to save layout */
+}
+
+/* --- Landing View --- */
+#view-landing {
+    background-size: cover;
+    background-position: center;
+    justify-content: center;
+    position: fixed; /* Keep it fixed so it covers everything */
+}
+
+/* A dark overlay so text is readable */
+#view-landing::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.landing-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.landing-content h1 {
+    font-size: 5rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+}
+
+.landing-content .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+    font-style: italic;
+    color: #DDDDDD;
+}
+
+.enter-link {
+    display: inline-block;
+    margin-top: 4rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 0.2rem;
+}
+
+/* Landing Fades */
+.fade-in-delay-1 { animation: fadeIn 2s ease-in-out 1s forwards; opacity: 0; }
+.fade-in-delay-2 { animation: fadeIn 2s ease-in-out 3s forwards; opacity: 0; }
+.fade-in-delay-3 { animation: fadeIn 2s ease-in-out 5s forwards; opacity: 0; }
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* --- Main View --- */
+#view-main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.main-header {
+    margin-bottom: 6rem;
+}
+
+.main-header .logo {
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+}
+
+/* General Section Styling */
+section {
+    margin-bottom: 8rem;
+    opacity: 0; /* JS will fade these in on scroll ideally, or just on load */
+    transform: translateY(20px);
+    transition: opacity var(--transition-medium), transform var(--transition-medium);
+}
+
+section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+section h2 {
+    font-size: 1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+    font-family: var(--font-body);
+}
+
+/* Quote & Love Message */
+.section-love-message {
+    position: relative;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    background: radial-gradient(circle at center, rgba(204, 85, 0, 0.05) 0%, transparent 75%);
+}
+
+.quote-text.love-letter {
+    font-size: 1.85rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+    font-weight: 300;
+    font-style: italic;
+    color: #F8EFE6;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 25px rgba(255, 180, 150, 0.15);
+}
+
+/* Music */
+.music-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.album-art-wrapper {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(204, 85, 0, 0.15);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+}
+
+.album-art-wrapper:hover {
+    transform: scale(1.03);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(204, 85, 0, 0.25);
+}
+
+.album-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.95);
+    transition: filter 0.4s ease;
+}
+
+.music-card.playing .album-art-wrapper {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 35px rgba(224, 169, 109, 0.4);
+}
+
+.album-play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.9;
+}
+
+.album-art-wrapper:hover .album-play-overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+    background: rgba(204, 85, 0, 0.7);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.album-play-overlay svg {
+    transition: transform 0.2s ease;
+}
+
+.album-play-overlay .play-icon {
+    margin-left: 2px;
+}
+
+.music-info {
+    width: 100%;
+    text-align: center;
+}
+
+.song-title {
+    font-size: 1.35rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    margin-bottom: 0.2rem;
+}
+
+.song-artist {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+/* Player Bar */
+.song-player-bar {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0 0.5rem;
+}
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: height 0.2s ease;
+}
+
+.progress-track:hover {
+    height: 6px;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent-orange), #E0A96D);
+    border-radius: 4px;
+    transition: width 0.1s linear;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Equalizer */
+.equalizer-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 12px;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.music-card.playing .equalizer-bars {
+    opacity: 1;
+}
+
+.equalizer-bars span {
+    width: 2.5px;
+    background-color: var(--color-accent-orange);
+    border-radius: 1px;
+    height: 3px;
+    transition: height 0.15s ease;
+}
+
+.music-card.playing .equalizer-bars span:nth-child(1) { animation: eqBar 0.9s ease-in-out infinite alternate; }
+.music-card.playing .equalizer-bars span:nth-child(2) { animation: eqBar 0.6s ease-in-out infinite 0.2s alternate; }
+.music-card.playing .equalizer-bars span:nth-child(3) { animation: eqBar 0.8s ease-in-out infinite 0.4s alternate; }
+.music-card.playing .equalizer-bars span:nth-child(4) { animation: eqBar 0.5s ease-in-out infinite 0.1s alternate; }
+
+@keyframes eqBar {
+    0% { height: 3px; }
+    100% { height: 12px; }
+}
+
+.song-play-btn {
+    margin-top: 0.5rem;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--color-muted);
+    color: var(--color-text);
+    padding: 0.6rem 1.8rem;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: all 0.3s ease;
+}
+
+.song-play-btn:hover {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+}
+
+.music-card.playing .song-play-btn {
+    border-color: var(--color-accent-orange);
+    color: #FFF;
+    background: rgba(204, 85, 0, 0.2);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Reflection */
+.reflection-question {
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    font-style: italic;
+}
+
+/* Portrait / Favourite View */
+.section-portrait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portrait-card {
+    position: relative;
+    max-width: 440px;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75), 0 0 35px rgba(204, 85, 0, 0.16);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.portrait-card:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 28px 55px rgba(0, 0, 0, 0.85), 0 0 45px rgba(204, 85, 0, 0.28);
+    border-color: rgba(204, 85, 0, 0.35);
+}
+
+.portrait-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    filter: brightness(0.97) contrast(1.02);
+    transition: filter 0.4s ease;
+}
+
+.portrait-card:hover .portrait-photo {
+    filter: brightness(1.02) contrast(1.04);
+}
+
+.portrait-caption {
+    padding: 1.1rem 1.4rem 1.25rem;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #F8EFE6;
+    letter-spacing: 0.03em;
+    background: linear-gradient(180deg, rgba(18, 18, 18, 0.9) 0%, rgba(12, 12, 12, 0.98) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nature-photo {
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
+    border-radius: 4px;
+    filter: brightness(0.85);
+}
+
+/* Journal */
+.section-journal {
+    margin-bottom: 4rem;
+}
+
+.section-journal h2 {
+    margin-bottom: 1rem;
+}
+
+#journal-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    text-align: center;
+    resize: none;
+    padding: 0.5rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#journal-input:focus {
+    border-bottom-color: var(--color-muted);
+}
+
+#journal-input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+    font-style: italic;
+}
+
+/* Ambient Sounds */
+.sound-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.sound-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s;
+    text-transform: lowercase;
+}
+
+.sound-btn:hover, .sound-btn.playing {
+    color: var(--color-text);
+}
+
+.sound-btn.playing::before {
+    content: '• ';
+    color: var(--color-accent-orange);
+}
+
+/* Footer Widgets */
+.main-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    margin-top: 6rem;
+    padding-top: 4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sunset-clock, .weather-widget {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+}
+
+.sunset-time {
+    display: block;
+    font-size: 1.2rem;
+    color: var(--color-accent-orange);
+    margin-top: 0.3rem;
+}
+
+.weather-widget {
+    color: var(--color-accent-green);
+}
+
+.motto {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+/* --- Hidden View --- */
+#view-4pm, #view-3pm {
+    justify-content: center;
+    text-align: center;
+    background-color: #000;
+}
+
+.hidden-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.hidden-text {
+    font-size: 1.2rem;
+    font-family: var(--font-heading);
+    font-style: italic;
+    color: var(--color-muted);
+    line-height: 1.8;
+}
+
+.return-link {
+    display: inline-block;
+    margin-top: 4rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+}
+
+/* Downwards Dedication */
+.downwards-dedication {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
+.downwards-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    animation: bounceDown 2.2s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); opacity: 0.35; }
+    50% { transform: translateY(6px); opacity: 0.8; }
+}
+
+.downwards-text {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    color: #F8D7DA;
+    text-shadow: 0 0 25px rgba(255, 130, 150, 0.4);
+    margin: 0;
+}
+
+.downwards-heart {
+    font-size: 1.5rem;
+    display: inline-block;
+    animation: heartBeat 1.8s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.25); filter: drop-shadow(0 0 10px rgba(255, 80, 100, 0.7)); }
+    30% { transform: scale(1.05); }
+    45% { transform: scale(1.2); filter: drop-shadow(0 0 8px rgba(255, 80, 100, 0.6)); }
+}
+
+/* Secret Love in The Fourth Hour */
+.hidden-love-note {
+    margin-top: 2.5rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hidden-love-note p {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.3rem;
+    color: #E8E8E8;
+    line-height: 1.7;
+}
+
+.hidden-signature {
+    margin-top: 1rem;
+    font-size: 1.15rem !important;
+    color: #F8D7DA !important;
+    letter-spacing: 0.05em;
+}
+
